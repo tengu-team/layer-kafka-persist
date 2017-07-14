@@ -1,0 +1,11 @@
+options:
+  image:
+    type: string
+    default: "sborny/kafka-ingestion"
+    description: |
+      Default kafka ingestion docker image.
+  topics:
+    type: string
+    default: ""
+    description: |
+      Space separated list of topics to subscribe to.

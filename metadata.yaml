@@ -1,0 +1,17 @@
+name: kafka-persist
+summary: installs kafka persistence via docker
+maintainer: Sander Borny <sander.borny@ugent.be>
+description: |
+  This charm installs Kafka persistence as a docker image. By connecting this charm to a
+  docker host, kafka soure and db sink,  it will get started.
+tags:
+  - streaming
+subordinate: false
+requires:
+  dockerhost:
+    interface: docker-image-host
+  mongodb:
+    interface: mongodb
+  kafka:
+    interface: kafka
+series: ['xenial']

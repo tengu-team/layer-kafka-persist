@@ -1,0 +1,4 @@
+includes: ['layer:docker-image',
+           'layer:kafka-helper',
+           'interface:kafka',
+           'interface:mongodb']
