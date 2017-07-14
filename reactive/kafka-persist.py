@@ -44,17 +44,16 @@ def start_ingestion(dh_relation):
     set_state('kafkaingestion.installed')
 
 
-@when('config.changed.topics', 'kafkaingestion.running')
+@when('config.changed.topics')
 def config_changed_topics():
     remove_state('config.changed.topics')
-    remove_state('kafkaingestion.running')
+    remove_state('kafkaingestion.installed')
 
 
 @when('config.changed.ports')
 def config_changed_ports():
     remove_state('config.changed.ports')
     remove_state('kafkaingestion.installed')
-    remove_state('kafkaingestion.running')
 
 
 @when('kafkaingestion.installed')
@@ -63,7 +62,6 @@ def dockerhost_removed():
     hookenv.log('Dockerhost removed')
     unitdata.kv().set('containers', {})
     remove_state('kafkaingestion.installed')
-    remove_state('kafkaingestion.running')
 
 
 def configure_env(key, value):
