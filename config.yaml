@@ -1,9 +1,9 @@
 options:
   image:
     type: string
-    default: "sborny/kafka-ingestion"
+    default: "tengudocker/kafka-persist"
     description: |
-      Default kafka ingestion docker image.
+      Default kafka persist docker image.
   topics:
     type: string
     default: ""

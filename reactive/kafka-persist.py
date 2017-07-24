@@ -10,13 +10,13 @@ def waiting_for_kafka():
     status_set('blocked', 'Waiting for Kafka relation')
 
 
-@when_none('mongodb.available')  # Add all database states
+@when_none('mongodb.available', 'rabbitmq.connected')  # Add all database states
 def waiting_for_database():
     status_set('blocked', 'Waiting for datastore relation')
 
 
 @when('database.configured')
-@when_none('mongodb.available')  # Add all database states
+@when_none('mongodb.available', 'rabbitmq.connected')  # Add all database states
 def database_removed():
     hookenv.log('Database relation removed')
     remove_state('kafkaingestion.installed')
@@ -26,8 +26,26 @@ def database_removed():
 def mongodb_connected(mongodb):
     hookenv.log('Mongodb connected')
     configure_env('datastore_type', 'mongodb')  # Should be set by every connected db
-    configure_env('datastore_conn', mongodb.connection_string())  # Should be set by every connected db
+    configure_env('mongodb_conn', mongodb.connection_string())  # Should be set by every connected db
     set_state('database.configured')   # Should be set by every connected db
+
+
+@when('rabbitmq.connected')
+@when_not('rabbitmq.available')
+def setup_rabbitmq(rabbitmq):
+    rabbitmq.request_access('persist', '/persist')
+    status_set('waiting', 'Waiting on RabbitMQ to configure vhost')
+
+
+@when('rabbitmq.available')
+def configure_rabbitmq(rabbitmq):
+    configure_env('datastore_type', 'rabbitmq')
+    configure_env('rabbitmq_username', rabbitmq.username())
+    configure_env('rabbitmq_password', rabbitmq.password())
+    configure_env('rabbitmq_vhost', rabbitmq.vhost())
+    configure_env('rabbitmq_host', rabbitmq.private_address())
+    configure_env('rabbitmq_port', 5672)
+    set_state('database.configured')
 
 
 @when('dockerhost.available', 'kafka.configured', 'database.configured')
@@ -67,4 +85,6 @@ def dockerhost_removed():
 def configure_env(key, value):
     env = unitdata.kv().get('docker-image-env', {})
     env[key] = value
+    hookenv.log('New docker-image-env')
+    hookenv.log(env)
     unitdata.kv().set('docker-image-env', env)

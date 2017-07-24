@@ -1,4 +1,6 @@
 includes: ['layer:docker-image',
            'layer:kafka-helper',
            'interface:kafka',
-           'interface:mongodb']
+           'interface:mongodb',
+           'interface:rabbitmq']
+repo: git@github.com:tengu-team/layer-kafka-persist.git

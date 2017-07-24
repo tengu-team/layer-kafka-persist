@@ -4,6 +4,7 @@ This layer creates a kafka -> data store stream.
 
 Supported data stores:
 - [Mongodb](https://jujucharms.com/mongodb/)
+- [RabbitMQ](https://jujucharms.com/rabbitmq-server/)
 
 Layers required to build this charm:
  - [kafka-helper](https://github.com/tengu-team/layer-kafka-helper)
@@ -45,6 +46,11 @@ default to the latest available offset.**
 ## Mongodb behaviour
 - In Mongodb, a database with the name `cot` is created.
 For every subscribed topic, a collection with the same name is created.
+
+## RabbitMQ behaviour
+- A single vhost will be created per charm name. For example, the charm units
+`persist/0` and `persist/1` will create a single vhost named `persist`.
+- The default exchange format `fanout` is used.
 
 ## Authors
 
