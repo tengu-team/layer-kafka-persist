@@ -20,13 +20,14 @@ def waiting_for_database():
 def database_removed():
     hookenv.log('Database relation removed')
     remove_state('kafkaingestion.installed')
+    remove_state('database.configured')
 
 
 @when('mongodb.available')
 def mongodb_connected(mongodb):
     hookenv.log('Mongodb connected')
     configure_env('datastore_type', 'mongodb')  # Should be set by every connected db
-    configure_env('mongodb_conn', mongodb.connection_string())  # Should be set by every connected db
+    configure_env('mongodb_conn', mongodb.connection_string())
     set_state('database.configured')   # Should be set by every connected db
 
 
@@ -85,6 +86,4 @@ def dockerhost_removed():
 def configure_env(key, value):
     env = unitdata.kv().get('docker-image-env', {})
     env[key] = value
-    hookenv.log('New docker-image-env')
-    hookenv.log(env)
     unitdata.kv().set('docker-image-env', env)
